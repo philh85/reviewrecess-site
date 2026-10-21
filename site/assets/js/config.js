@@ -7,7 +7,7 @@
 
    Rules (anything else is ignored and treated as blank):
      * URLs must start with https://
-     * CONTACT_EMAIL is just the address, e.g. "hello@reviewrecess.com"
+     * CONTACT_EMAIL is just the address, e.g. "support@reviewrecess.com"
    =================================================================== */
 window.RR_CONFIG = {
   // Your TpT store page, e.g. "https://www.teacherspayteachers.com/store/review-recess"
@@ -17,7 +17,7 @@ window.RR_CONFIG = {
   SUPPORT_CHATBOT_URL: "",      // PLACEHOLDER
 
   // Support email address shown on Help, About, Privacy and Terms
-  CONTACT_EMAIL: "",            // PLACEHOLDER
+  CONTACT_EMAIL: "support@reviewrecess.com",
 
   // Your YouTube channel (preview and how-to videos)
   YOUTUBE_URL: ""               // PLACEHOLDER

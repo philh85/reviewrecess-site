@@ -36,7 +36,7 @@ reviewrecess-site/
    ```js
    TPT_STORE_URL: "https://www.teacherspayteachers.com/store/your-store-name",
    SUPPORT_CHATBOT_URL: "https://...your chatbot page...",
-   CONTACT_EMAIL: "hello@reviewrecess.com",
+   CONTACT_EMAIL: "support@reviewrecess.com",
    YOUTUBE_URL: "https://www.youtube.com/@reviewrecess",
    ```
 3. Save, then upload the site again (step 3 below for Cloudflare, or re-upload `config.js` on Cloudways).
@@ -50,7 +50,7 @@ Rules: links must start with `https://`. `CONTACT_EMAIL` is just the address. An
 | `CONTACT_EMAIL` | "Email support" button and the email address on Help, About, Privacy, Terms |
 | `YOUTUBE_URL` | Footer and About |
 
-**Free email at your domain:** Cloudflare (Email > Email Routing) can forward `hello@reviewrecess.com` to your Gmail for free once the domain is on Cloudflare (step 2).
+**Free email at your domain:** Cloudflare (Email > Email Routing) can forward `support@reviewrecess.com` to your Gmail for free once the domain is on Cloudflare (step 2).
 
 **Preview on your PC before uploading:** links start with `/`, so double-clicking `index.html` will show the page without styles. Instead open PowerShell in the `site` folder and run `py -m http.server 8000`, then visit http://localhost:8000.
 
