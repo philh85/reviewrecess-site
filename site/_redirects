@@ -1,0 +1,5 @@
+# Cloudflare Pages redirects (ignored by other hosts; .htaccess has the same rules for Apache/Cloudways).
+# V2.4: Grammar Battleships was renamed Review Recess Answer Armada. Old links to /games/#grammar-battleships
+# still work through a hidden anchor on the Games page (a #fragment never reaches the server, so it can't be redirected here).
+/assets/img/games/grammar-battleships-640.webp   /assets/img/games/answer-armada-640.webp   301
+/assets/img/games/grammar-battleships-1200.webp  /assets/img/games/answer-armada-1200.webp  301

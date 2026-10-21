@@ -18,6 +18,7 @@ reviewrecess-site/
     assets/css/site.css    styles (navy + gold)
     assets/img/            screenshots (webp), logo-mark.svg, logo-wordmark.svg, og-image.png
     _headers               security headers for Cloudflare Pages
+    _redirects             301 redirects for Cloudflare Pages (old image links of renamed games)
     .htaccess              the same headers + 404 page for Apache/Cloudways
     sitemap.xml  robots.txt  favicon.*  site.webmanifest
   site.zip               the same files zipped, for Cloudflare's "upload a zip" option
@@ -123,7 +124,9 @@ Use this only if you'd rather keep the site on Cloudways. It works the same; Clo
 * No prices, reviews, testimonials or numbers appear anywhere on purpose. Add real ones only once you have them.
 
 ## 5. Changing wording (optional)
-Small edits: open the page's `index.html` in Notepad and change the text. But edits made this way are lost if you ever rebuild with the tool. For bigger changes, edit `tools/build.py` (pages) or `tools/games.py` (game names and descriptions), then run `py tools\build.py`. It rewrites the HTML pages in `site\`, the sitemap and robots.txt; it never touches `config.js`, images, `_headers` or `.htaccess`.
+Small edits: open the page's `index.html` in Notepad and change the text. But edits made this way are lost if you ever rebuild with the tool. For bigger changes, edit `tools/build.py` (pages) or `tools/games.py` (game names and descriptions), then run `py tools\build.py`. It rewrites the HTML pages in `site\`, the sitemap and robots.txt; it never touches `config.js`, images, `_headers`, `_redirects` or `.htaccess`.
+
+**Renamed games:** Grammar Battleships is now **Review Recess Answer Armada** (slug `answer-armada`). Old links to `/games/#grammar-battleships` still land on it (hidden anchor, `OLD_ANCHORS` in `tools/build.py`), and the old image URLs redirect with a 301 (`_redirects` on Cloudflare Pages, the same rule in `.htaccess` on Cloudways).
 
 ## 6. Rules the content follows
 * No publisher names (textbook brands) anywhere. AP® is only used with the ® and with the College Board disclaimer in the footer and Terms.

@@ -96,7 +96,7 @@ CTA = f'''<section class="cta on-navy"><div class="wrap">
 </div></section>'''
 
 # ---------------- Home ----------------
-feature = [g for g in GAMES if g[0] in ('brain-board-blitz','million-point-climb','forbidden-words','quiz-tac-toe','grammar-battleships','sentence-slot-machine')]
+feature = [g for g in GAMES if g[0] in ('brain-board-blitz','million-point-climb','forbidden-words','quiz-tac-toe','answer-armada','sentence-slot-machine')]
 cards = ''.join(f'''<article class="card game-card">{img(g[0], g[7])}<div class="body"><span class="tag">{g[2]}</span><h3>{g[1]}</h3><p class="muted" style="margin:0">{g[5]}</p></div></article>''' for g in feature)
 home = f'''<section class="hero"><div class="wrap hero-grid">
 <div>
@@ -154,7 +154,11 @@ page('/', 'Review Recess | Classroom review games for the whole class',
      home, 'index.html')
 
 # ---------------- Games ----------------
-rows = ''.join(f'''<article class="game-row" id="{g[0]}">
+# Old anchors that must keep working after a rename (links like /games/#old-id land on the renamed game).
+OLD_ANCHORS = {'answer-armada': ['grammar-battleships']}
+def anchors(gid):
+    return ''.join(f'<span id="{a}" aria-hidden="true"></span>' for a in OLD_ANCHORS.get(gid, []))
+rows = ''.join(f'''<article class="game-row" id="{g[0]}">{anchors(g[0])}
 <figure class="game-media shot" style="margin:0;box-shadow:var(--shadow);border-color:var(--line)">{img(g[0], g[7], eager=i<2, sizes="(max-width:820px) 100vw, 560px")}</figure>
 <div><span class="tag">{g[2]}</span><h2 style="font-size:1.7rem">{g[1]}</h2><p><strong>{g[5]}</strong></p><p class="muted">{g[6]}</p>
 <dl><dt>Best for</dt><dd>{g[3]}</dd><dt>Players</dt><dd>{g[4]}</dd></dl></div>
