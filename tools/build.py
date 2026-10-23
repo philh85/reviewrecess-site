@@ -119,7 +119,7 @@ home = f'''<section class="hero"><div class="wrap hero-grid">
 <p class="eyebrow">Classroom review games for U.S. teachers</p>
 <h1>Whole-class review games, ready for your classroom screen.</h1>
 <p class="lead">Team games that run on your smart TV or projector, filled with your own questions or a ready-made pack, and saved in your own Google Drive.</p>
-<ul class="hero-points"><li>Thirteen games, from quiz boards to drag-and-drop word games</li><li>Pick exactly which questions to use each lesson</li><li>No student accounts or devices needed</li></ul>
+<ul class="hero-points"><li>A growing collection, from quiz boards to drag-and-drop word games</li><li>Pick exactly which questions to use each lesson</li><li>No student accounts or devices needed</li></ul>
 <div class="btn-row">{btn("TPT_STORE_URL","Visit our TpT store")}<a class="btn btn-ghost" href="/games/">See the games</a></div>
 </div>
 <figure class="shot" style="margin:0">{img("brain-board-blitz", GAMES[0][7], eager=True, sizes="(max-width:900px) 100vw, 540px")}<figcaption>Brain Board Blitz: a 5 × 5 team quiz board with live scores.</figcaption></figure>
@@ -136,7 +136,7 @@ home = f'''<section class="hero"><div class="wrap hero-grid">
 <section class="alt"><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:26px">
 <div><p class="eyebrow">The games</p><h2 style="margin:0">Built for the front of the room</h2></div>
-<a class="btn btn-navy" href="/games/">All 13 games</a></div>
+<a class="btn btn-navy" href="/games/">See all the games</a></div>
 <div class="grid g3">{cards}</div>
 </div></section>
 
@@ -166,7 +166,7 @@ home = f'''<section class="hero"><div class="wrap hero-grid">
 </div></section>
 {CTA}'''
 page('/', 'Review Recess | Classroom review games for the whole class',
-     'Whole-class review games for your smart TV or projector. Thirteen team games that run in your own Google account, with reusable question banks and a tick-box question picker.',
+     'Whole-class review games for your smart TV or projector. Team games that run in your own Google account, with reusable question banks and a tick-box question picker.',
      home, 'index.html')
 
 # ---------------- Games ----------------
@@ -182,7 +182,7 @@ rows = ''.join(f'''<article class="game-row" id="{g[0]}">{anchors(g[0])}
 </article>''' for i, g in enumerate(GAMES))
 jump = ''.join(f'<li><a href="/games/{g[0]}/">{E(g[1])}</a></li>' for g in GAMES)
 games = f'''<div class="page-head"><div class="wrap">
-<p class="eyebrow">The collection</p><h1>All 13 games</h1>
+<p class="eyebrow">The collection</p><h1>All the games</h1>
 <p class="lead">Every game is built for one classroom screen and the whole class. Each one includes saved question banks, team rosters, a tick-box question picker and automatic reshuffling. Open any game for a step-by-step guide to playing it.</p>
 <ul class="toc">{jump}</ul></div></div>
 <section style="padding-top:20px"><div class="wrap">{rows}</div></section>
@@ -196,7 +196,7 @@ games = f'''<div class="page-head"><div class="wrap">
 <div class="feature"><h3>Your Drive, your data</h3><p class="muted">Questions and rosters are saved in a spreadsheet in your own Google Drive.</p></div>
 </div></div></section>
 {CTA}'''
-page('/games/', 'The games', 'Thirteen whole-class review games for the classroom screen: Brain Board Blitz, Million Point Climb, Forbidden Words, Review Recess Word Magnets, Word Scramble and more.', games, 'games/index.html')
+page('/games/', 'The games', 'Whole-class review games for the classroom screen: Brain Board Blitz, Million Point Climb, Forbidden Words, Review Recess Word Magnets, Word Scramble and more.', games, 'games/index.html')
 # ---------------- Game pages (/games/<slug>/) ----------------
 # All wording lives in tools/game_pages.py. Links (TpT, free version) live in assets/js/config.js.
 def crumbs(items):
@@ -284,7 +284,7 @@ def game_page(g):
 <section class="alt" id="related"><div class="wrap">
 <p class="eyebrow">Keep exploring</p><h2>Related games</h2>
 <div class="grid g3" style="margin-top:22px">{rel}</div>
-<p style="margin:26px 0 0"><a href="/games/">See all 13 games →</a></p>
+<p style="margin:26px 0 0"><a href="/games/">See all the games →</a></p>
 </div></section>
 <section class="cta on-navy"><div class="wrap">
 <p class="eyebrow">Ready to play {E(short)}?</p>
