@@ -3,3 +3,16 @@
 # still work through a hidden anchor on the Games page (a #fragment never reaches the server, so it can't be redirected here).
 /assets/img/games/grammar-battleships-640.webp   /assets/img/games/answer-armada-640.webp   301
 /assets/img/games/grammar-battleships-1200.webp  /assets/img/games/answer-armada-1200.webp  301
+# 23 Oct 2026: every game now has its own page at /games/<slug>/.
+# What Does It Modify? was renamed Review Recess Word Magnets, and Quiz Tac Toe is now listed as the Tic-Tac-Toe Quiz Game.
+# Old #anchors on /games/ (#what-does-it-modify, #quiz-tac-toe, #grammar-battleships) keep working through hidden anchors.
+/games/what-does-it-modify     /games/word-magnets/            301
+/games/what-does-it-modify/    /games/word-magnets/            301
+/games/quiz-tac-toe            /games/tic-tac-toe-quiz-game/   301
+/games/quiz-tac-toe/           /games/tic-tac-toe-quiz-game/   301
+/games/grammar-battleships     /games/answer-armada/           301
+/games/grammar-battleships/    /games/answer-armada/           301
+/assets/img/games/what-does-it-modify-640.webp   /assets/img/games/word-magnets-640.webp   301
+/assets/img/games/what-does-it-modify-1200.webp  /assets/img/games/word-magnets-1200.webp  301
+/assets/img/games/quiz-tac-toe-640.webp          /assets/img/games/tic-tac-toe-quiz-game-640.webp   301
+/assets/img/games/quiz-tac-toe-1200.webp         /assets/img/games/tic-tac-toe-quiz-game-1200.webp  301

@@ -2,8 +2,13 @@
 """Builds the static Review Recess site into ../site/ (pages, sitemap, robots).
 Shared header/footer live here so every page stays consistent. Links are NOT here: they live
 in assets/js/config.js so Phil can change them without rebuilding."""
-import os, html
+import os, html, json, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from games import GAMES
+from game_pages import GAME_PAGES, OLD_SLUGS, NEED, FREE_TEXT, FULL_TEXT, BUNDLE_TEXT
+LASTMOD = '2026-10-23'
+GP = {g['slug']: g for g in GAME_PAGES}
+assert [g[0] for g in GAMES if g[0] not in GP] == [] and len(GAMES) == len(GAME_PAGES) == 13
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'site')
 DOMAIN = 'https://reviewrecess.com'
 E = html.escape
@@ -26,10 +31,12 @@ def header(path):
 <nav class="nav" id="site-nav" aria-label="Main"><ul>{items}<li>{btn("TPT_STORE_URL", "TpT store", "btn-navy btn-sm")}</li></ul></nav>
 </div></header>'''
 
+FOOT_GAMES = ''.join(f'<li><a href="/games/{g[0]}/">{E(g[1])}</a></li>' for g in GAMES)
 FOOTER = f'''<footer class="site-footer"><div class="wrap">
 <div class="foot-grid">
 <div><a class="brand" href="/">{MARK}<span><span class="brand-name">Review Recess</span><span class="brand-sub">Classroom review games</span></span></a>
 <p class="small" style="margin-top:14px;max-width:30em">Whole-class review games for the classroom screen. They run in your own Google account, and your questions stay in your own Google Drive.</p></div>
+<div><h2>Games</h2><ul class="foot-games">{FOOT_GAMES}</ul></div>
 <div><h2>Explore</h2><ul><li><a href="/games/">All games</a></li><li><a href="/help/">Help &amp; Support</a></li><li><a href="/about/">About</a></li><li>{btn("TPT_STORE_URL","TpT store","btn-sm btn-ghost-foot")}</li></ul></div>
 <div><h2>Policies</h2><ul><li><a href="/privacy/">Privacy</a></li><li><a href="/terms/">Terms &amp; licence</a></li><li><a data-link="YOUTUBE_URL" aria-disabled="true">YouTube<span class="soon"> (coming soon)</span></a></li></ul></div>
 </div>
@@ -39,9 +46,10 @@ FOOTER = f'''<footer class="site-footer"><div class="wrap">
 <p>Review Recess is an independent seller and is not affiliated with Teachers Pay Teachers. Google, Google Drive and Google Apps Script are trademarks of Google LLC.</p>
 </div></div></footer>'''
 
-def page(path, title, desc, body, out, noindex=False):
+def page(path, title, desc, body, out, noindex=False, og_image='/assets/img/og-image.png', og_alt='Review Recess: classroom review games for the whole class', og_type='website', jsonld=None):
     full = title if 'Review Recess' in title else f'{title} | Review Recess'
     canon = DOMAIN + path
+    ld = ''.join('\n<script type="application/ld+json">' + json.dumps(j, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/') + '</script>' for j in (jsonld or []))
     doc = f'''<!doctype html>
 <html lang="en-US">
 <head>
@@ -55,16 +63,21 @@ def page(path, title, desc, body, out, noindex=False):
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="Review Recess">
 <meta property="og:title" content="{E(full)}">
 <meta property="og:description" content="{E(desc)}">
 <meta property="og:url" content="{canon}">
-<meta property="og:image" content="{DOMAIN}/assets/img/og-image.png">
+<meta property="og:image" content="{DOMAIN}{og_image}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Review Recess: classroom review games for the whole class">
+<meta property="og:image:alt" content="{E(og_alt)}">
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{E(full)}">
+<meta name="twitter:description" content="{E(desc)}">
+<meta name="twitter:image" content="{DOMAIN}{og_image}">
+<meta name="twitter:image:alt" content="{E(og_alt)}">{ld}
 <link rel="stylesheet" href="/assets/css/site.css">
 <script src="/assets/js/config.js" defer></script>
 <script src="/assets/js/site.js" defer></script>
@@ -96,14 +109,17 @@ CTA = f'''<section class="cta on-navy"><div class="wrap">
 </div></section>'''
 
 # ---------------- Home ----------------
-feature = [g for g in GAMES if g[0] in ('brain-board-blitz','million-point-climb','forbidden-words','quiz-tac-toe','answer-armada','sentence-slot-machine')]
-cards = ''.join(f'''<article class="card game-card">{img(g[0], g[7])}<div class="body"><span class="tag">{g[2]}</span><h3>{g[1]}</h3><p class="muted" style="margin:0">{g[5]}</p></div></article>''' for g in feature)
+feature = [g for g in GAMES if g[0] in ('brain-board-blitz','million-point-climb','forbidden-words','answer-armada','word-magnets','sentence-snap')]
+def game_card(g, h='h3'):
+    return (f'''<article class="card game-card"><a class="card-img" href="/games/{g[0]}/" tabindex="-1" aria-hidden="true">{img(g[0], g[7])}</a><div class="body"><span class="tag">{E(g[2])}</span>'''
+            f'''<{h}><a class="card-link" href="/games/{g[0]}/">{E(g[1])}</a></{h}><p class="muted" style="margin:0">{E(g[5])}</p><p class="more"><a href="/games/{g[0]}/">How to play →<span class="sr"> {E(g[1])}</span></a></p></div></article>''')
+cards = ''.join(game_card(g) for g in feature)
 home = f'''<section class="hero"><div class="wrap hero-grid">
 <div>
 <p class="eyebrow">Classroom review games for U.S. teachers</p>
 <h1>Whole-class review games, ready for your classroom screen.</h1>
 <p class="lead">Team games that run on your smart TV or projector, filled with your own questions or a ready-made pack, and saved in your own Google Drive.</p>
-<ul class="hero-points"><li>Eleven games, from quiz boards to speaking games</li><li>Pick exactly which questions to use each lesson</li><li>No student accounts or devices needed</li></ul>
+<ul class="hero-points"><li>Thirteen games, from quiz boards to drag-and-drop word games</li><li>Pick exactly which questions to use each lesson</li><li>No student accounts or devices needed</li></ul>
 <div class="btn-row">{btn("TPT_STORE_URL","Visit our TpT store")}<a class="btn btn-ghost" href="/games/">See the games</a></div>
 </div>
 <figure class="shot" style="margin:0">{img("brain-board-blitz", GAMES[0][7], eager=True, sizes="(max-width:900px) 100vw, 540px")}<figcaption>Brain Board Blitz: a 5 × 5 team quiz board with live scores.</figcaption></figure>
@@ -120,7 +136,7 @@ home = f'''<section class="hero"><div class="wrap hero-grid">
 <section class="alt"><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:26px">
 <div><p class="eyebrow">The games</p><h2 style="margin:0">Built for the front of the room</h2></div>
-<a class="btn btn-navy" href="/games/">All 11 games</a></div>
+<a class="btn btn-navy" href="/games/">All 13 games</a></div>
 <div class="grid g3">{cards}</div>
 </div></section>
 
@@ -150,23 +166,24 @@ home = f'''<section class="hero"><div class="wrap hero-grid">
 </div></section>
 {CTA}'''
 page('/', 'Review Recess | Classroom review games for the whole class',
-     'Whole-class review games for your smart TV or projector. Eleven team games that run in your own Google account, with reusable question banks and a tick-box question picker.',
+     'Whole-class review games for your smart TV or projector. Thirteen team games that run in your own Google account, with reusable question banks and a tick-box question picker.',
      home, 'index.html')
 
 # ---------------- Games ----------------
 # Old anchors that must keep working after a rename (links like /games/#old-id land on the renamed game).
-OLD_ANCHORS = {'answer-armada': ['grammar-battleships']}
+OLD_ANCHORS = OLD_SLUGS   # in game_pages.py
 def anchors(gid):
     return ''.join(f'<span id="{a}" aria-hidden="true"></span>' for a in OLD_ANCHORS.get(gid, []))
 rows = ''.join(f'''<article class="game-row" id="{g[0]}">{anchors(g[0])}
 <figure class="game-media shot" style="margin:0;box-shadow:var(--shadow);border-color:var(--line)">{img(g[0], g[7], eager=i<2, sizes="(max-width:820px) 100vw, 560px")}</figure>
-<div><span class="tag">{g[2]}</span><h2 style="font-size:1.7rem">{g[1]}</h2><p><strong>{g[5]}</strong></p><p class="muted">{g[6]}</p>
-<dl><dt>Best for</dt><dd>{g[3]}</dd><dt>Players</dt><dd>{g[4]}</dd></dl></div>
+<div><span class="tag">{E(g[2])}</span><h2 style="font-size:1.7rem"><a class="card-link" href="/games/{g[0]}/">{E(g[1])}</a></h2><p><strong>{E(g[5])}</strong></p><p class="muted">{E(g[6])}</p>
+<dl><dt>Best for</dt><dd>{E(g[3])}</dd><dt>Players</dt><dd>{E(g[4])}</dd></dl>
+<p style="margin:18px 0 0"><a class="btn btn-navy btn-sm" href="/games/{g[0]}/">How to play {E(g[1])}</a></p></div>
 </article>''' for i, g in enumerate(GAMES))
-jump = ''.join(f'<li><a href="#{g[0]}">{g[1]}</a></li>' for g in GAMES)
+jump = ''.join(f'<li><a href="/games/{g[0]}/">{E(g[1])}</a></li>' for g in GAMES)
 games = f'''<div class="page-head"><div class="wrap">
-<p class="eyebrow">The collection</p><h1>All 11 games</h1>
-<p class="lead">Every game is built for one classroom screen and the whole class. Each one includes saved question banks, team rosters, a tick-box question picker and automatic reshuffling.</p>
+<p class="eyebrow">The collection</p><h1>All 13 games</h1>
+<p class="lead">Every game is built for one classroom screen and the whole class. Each one includes saved question banks, team rosters, a tick-box question picker and automatic reshuffling. Open any game for a step-by-step guide to playing it.</p>
 <ul class="toc">{jump}</ul></div></div>
 <section style="padding-top:20px"><div class="wrap">{rows}</div></section>
 <section class="alt"><div class="wrap"><h2>Included in every game</h2>
@@ -179,7 +196,158 @@ games = f'''<div class="page-head"><div class="wrap">
 <div class="feature"><h3>Your Drive, your data</h3><p class="muted">Questions and rosters are saved in a spreadsheet in your own Google Drive.</p></div>
 </div></div></section>
 {CTA}'''
-page('/games/', 'The games', 'Eleven whole-class review games for the classroom screen: Brain Board Blitz, Million Point Climb, Forbidden Words, Quiz Tac Toe, Letter Lifeline and more.', games, 'games/index.html')
+page('/games/', 'The games', 'Thirteen whole-class review games for the classroom screen: Brain Board Blitz, Million Point Climb, Forbidden Words, Review Recess Word Magnets, Word Scramble and more.', games, 'games/index.html')
+# ---------------- Game pages (/games/<slug>/) ----------------
+# All wording lives in tools/game_pages.py. Links (TpT, free version) live in assets/js/config.js.
+def crumbs(items):
+    lis = ''.join((f'<li><a href="{h}">{E(t)}</a></li>' if h else f'<li aria-current="page">{E(t)}</li>') for h, t in items)
+    return f'<nav class="crumbs" aria-label="Breadcrumb"><div class="wrap"><ol>{lis}</ol></div></nav>'
+
+def shot_img(key, alt, eager=False, sizes='(max-width:620px) 100vw, (max-width:900px) 50vw, 360px'):
+    return img(key, alt, eager=eager, sizes=sizes)
+
+def ol(items, start):
+    return f'<ol class="steps" start="{start}">' + ''.join(f'<li data-n="{start + i}">{E(x)}</li>' for i, x in enumerate(items)) + '</ol>'
+
+def game_page(g):
+    slug, name, short = g['slug'], g['name'], g['short']
+    path = f'/games/{slug}/'
+    url = DOMAIN + path
+    main_key, main_src, main_alt, main_cap = g['shots'][0]
+    tpt = (f'<a class="btn btn-gold" data-link="TPT_GAME_URLS.{slug}" data-fallback="TPT_STORE_URL" aria-disabled="true">'
+           f'Get it on TpT<span class="soon">Coming soon</span></a>')
+    free = (f'<a class="btn btn-ghost" data-link="FREE_VERSION_URLS.{slug}" data-optional hidden aria-disabled="true">'
+            f'Try the free version<span class="soon">Coming soon</span></a>')
+    glance = (f'<dl class="glance"><dt>Grades</dt><dd>{E(g["grades"])}</dd><dt>Subjects</dt><dd>{E(g["subjects"])}</dd>'
+              f'<dt>Group size</dt><dd>{E(g["players"])}</dd><dt>Time</dt><dd>{E(g["time"])}</dd></dl>')
+    intro = ''.join(f'<p class="lead">{E(p)}</p>' if i == 0 else f'<p class="muted">{E(p)}</p>' for i, p in enumerate(g['intro']))
+    n1, n2 = len(g['setup']), len(g['setup']) + len(g['round'])
+    how = (f'<h3>Set up the game</h3>{ol(g["setup"], 1)}<h3>Play a round</h3>{ol(g["round"], n1 + 1)}'
+           f'<h3>Scoring and winning</h3>{ol(g["scoring"], n2 + 1)}')
+    gallery = ''.join(f'<figure class="shot shot-light">{shot_img(k, a)}<figcaption>{E(c)}</figcaption></figure>' for k, s, a, c in g['shots'][1:])
+    badge = '<span class="badge-full">Full version</span>'
+    feat = lambda items: ''.join(f'<div class="feature{" feature-full" if x[2:] else ""}"><h3>{E(x[0])}{badge if x[2:] else ""}</h3>'
+                                 f'<p class="muted">{E(x[1])}</p></div>' for x in items)
+    tips = ''.join(f'<li>{E(t)}</li>' for t in g['tips'])
+    ideas = ''.join(f'<div class="card idea"><h3>{E(k)}</h3><p class="muted" style="margin:0">{E(v)}</p></div>' for k, v in g['subject_ideas'].items())
+    need = ''.join(f'<div class="card"><h3>{E(t)}</h3><p class="muted" style="margin:0">{E(d)}</p></div>' for t, d in NEED)
+    full_extra = f' {E(g["full_extra"])}' if g.get('full_extra') else ''
+    free_extra = f' {E(g["free_extra"])}' if g.get('free_extra') else ''
+    faq = ''.join(f'<details><summary>{E(q_)}</summary><div class="a"><p>{E(a)}</p></div></details>' for q_, a in g['faq'])
+    rel = ''.join(game_card(next(x for x in GAMES if x[0] == r), h='h3') for r in g['related'])
+    toc = [('how-to-play', 'How to play'), ('modes', 'Modes & settings'), ('tips', 'Teacher tips'),
+           ('what-you-need', 'What you need'), ('versions', 'Free & full version'), ('faq', 'FAQ'), ('related', 'Related games')]
+    toc_html = ''.join(f'<li><a href="#{i}">{t}</a></li>' for i, t in toc)
+    body = f'''{crumbs([('/', 'Home'), ('/games/', 'Games'), (None, name)])}
+<div class="page-head game-head"><div class="wrap game-hero">
+<div>
+<p class="eyebrow">{E(g["tag"])}</p>
+<h1>{E(g["h1"])}</h1>
+{intro}
+<div class="btn-row" style="margin-top:22px">{tpt}{free}<a class="btn btn-ghost" href="#how-to-play">How to play</a></div>
+</div>
+<div><figure class="shot shot-light" style="margin:0">{shot_img(main_key, main_alt, eager=True, sizes="(max-width:900px) 100vw, 520px")}<figcaption>{E(main_cap)}</figcaption></figure>
+{glance}</div>
+</div>
+<div class="wrap"><ul class="toc" aria-label="On this page">{toc_html}</ul></div></div>
+
+<section id="how-to-play"><div class="wrap grid g2 how">
+<div class="prose"><p class="eyebrow">Step by step</p><h2>How to play {E(short)}</h2>{how}</div>
+<div class="gallery">{gallery}</div>
+</div></section>
+
+<section class="alt" id="modes"><div class="wrap">
+<p class="eyebrow">Make it fit your class</p><h2>{E(short)} modes, settings and options</h2>
+<div class="grid g3" style="margin-top:22px">{feat(g["modes"])}{feat(g["settings"])}</div>
+<p class="small muted" style="margin:22px 0 0">Every Review Recess game also has light, dark and high-contrast themes, big text, large buttons and full screen, plus a tick-box question picker and an automatic reshuffle so no question repeats until all have been used.</p>
+</div></section>
+
+<section id="tips"><div class="wrap grid g2" style="gap:40px">
+<div class="prose"><p class="eyebrow">From the classroom</p><h2>Tips for teachers</h2><ul class="ticks">{tips}</ul></div>
+<div><p class="eyebrow">Ideas by subject</p><h2>Ways to use it across the curriculum</h2><div class="grid g2 ideas" style="margin-top:18px">{ideas}</div></div>
+</div></section>
+
+<section class="alt" id="what-you-need"><div class="wrap">
+<p class="eyebrow">Before you start</p><h2>What you need</h2>
+<div class="grid g3" style="margin-top:22px">{need}</div>
+<div class="grid g2" id="versions" style="margin-top:40px">
+<div class="card"><h3>Free version</h3><p class="muted">{E(FREE_TEXT)}{free_extra}</p><div class="btn-row">{free.replace('btn-ghost', 'btn-navy')}<span class="small muted" data-free-note>The free version for this game is coming soon.</span></div></div>
+<div class="card version-full"><h3>Full version</h3><p class="muted">{E(FULL_TEXT)}{full_extra}</p><p class="muted">{E(BUNDLE_TEXT)}</p><div class="btn-row">{tpt}</div></div>
+</div>
+</div></section>
+
+<section id="faq"><div class="wrap prose faq">
+<p class="eyebrow">Questions</p><h2>{E(short)} FAQ</h2>{faq}
+<div class="card" style="margin-top:26px"><h3>Need help getting started?</h3><p class="muted">Opening your game link, Google permissions and school accounts are all covered on our help page.</p><div class="btn-row"><a class="btn btn-navy" href="/help/">Help &amp; Support</a></div></div>
+</div></section>
+
+<section class="alt" id="related"><div class="wrap">
+<p class="eyebrow">Keep exploring</p><h2>Related games</h2>
+<div class="grid g3" style="margin-top:22px">{rel}</div>
+<p style="margin:26px 0 0"><a href="/games/">See all 13 games →</a></p>
+</div></section>
+<section class="cta on-navy"><div class="wrap">
+<p class="eyebrow">Ready to play {E(short)}?</p>
+<h2>Get {E(short)} on Teachers Pay Teachers</h2>
+<p class="lead" style="margin:0 auto 26px">Every game, bundle and question pack is sold through our TpT store.</p>
+<div class="btn-row">{tpt}<a class="btn btn-ghost" href="/help/">Installation help</a></div>
+</div></section>'''
+    img_abs = f'{DOMAIN}/assets/img/games/{main_key}-1200.webp'
+    jsonld = [{
+        '@context': 'https://schema.org', '@graph': [
+            {'@type': 'WebPage', '@id': url + '#webpage', 'url': url, 'name': g['title'], 'description': g['description'],
+             'inLanguage': 'en-US', 'isPartOf': {'@type': 'WebSite', 'name': 'Review Recess', 'url': DOMAIN + '/'},
+             'primaryImageOfPage': {'@type': 'ImageObject', 'url': img_abs, 'width': 1200, 'height': 675},
+             'breadcrumb': {'@id': url + '#breadcrumb'}, 'about': {'@id': url + '#game'}},
+            {'@type': 'BreadcrumbList', '@id': url + '#breadcrumb', 'itemListElement': [
+                {'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': DOMAIN + '/'},
+                {'@type': 'ListItem', 'position': 2, 'name': 'Games', 'item': DOMAIN + '/games/'},
+                {'@type': 'ListItem', 'position': 3, 'name': name, 'item': url}]},
+            {'@type': 'SoftwareApplication', '@id': url + '#game', 'name': name, 'description': g['description'],
+             'applicationCategory': 'EducationalApplication', 'applicationSubCategory': 'Classroom review game',
+             'operatingSystem': 'Web browser', 'image': img_abs, 'url': url, 'inLanguage': 'en-US',
+             'audience': {'@type': 'EducationalAudience', 'educationalRole': 'teacher'},
+             'educationalLevel': g['grades'], 'publisher': {'@type': 'Organization', 'name': 'Review Recess', 'url': DOMAIN + '/'}},
+            {'@type': 'FAQPage', '@id': url + '#faq', 'mainEntity': [
+                {'@type': 'Question', 'name': q_, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q_, a in g['faq']]},
+        ]}]
+    page(path, g['title'], g['description'], body, f'games/{slug}/index.html',
+         og_image=f'/assets/img/og/{slug}.jpg', og_alt=main_alt, og_type='article', jsonld=jsonld)
+
+for _g in GAME_PAGES:
+    game_page(_g)
+
+
+# ---------------- game-pages-copy.md (all game-page wording in one file for review) ----------------
+def write_copy_md():
+    L = ['# Review Recess game pages: all copy for review', '',
+         f'Generated by tools/build.py from tools/game_pages.py on {LASTMOD}. Edit the wording in tools/game_pages.py, then rebuild.', '',
+         '## Shared sections (on every game page)', '', '### What you need']
+    L += [f'- **{t}.** {d}' for t, d in NEED]
+    L += ['', '### Free version', FREE_TEXT, '', '### Full version', FULL_TEXT, '', BUNDLE_TEXT, '',
+          '### Buttons', '- "Get it on TpT": TPT_GAME_URLS[slug] in config.js, else TPT_STORE_URL, else a grey Coming soon badge.',
+          '- "Try the free version": FREE_VERSION_URLS[slug] in config.js. Hidden while blank.', '- "Help & Support" (/help/) and 3 related games.', '']
+    for g in GAME_PAGES:
+        L += ['---', '', f'## {g["name"]}', '', f'**URL:** {DOMAIN}/games/{g["slug"]}/  ',
+              f'**Title tag:** {g["title"]}  ', f'**Meta description ({len(g["description"])} characters):** {g["description"]}  ',
+              f'**H1:** {g["h1"]}  ', f'**Tag:** {g["tag"]}', '', '### Intro'] + [p + '\n' for p in g['intro']]
+        L += ['### At a glance', f'- Grades: {g["grades"]}', f'- Subjects: {g["subjects"]}', f'- Group size: {g["players"]}', f'- Time: {g["time"]}', '']
+        n = 1
+        L += [f'### How to play {g["short"]}']
+        for head, key in (('Set up the game', 'setup'), ('Play a round', 'round'), ('Scoring and winning', 'scoring')):
+            L += ['', f'**{head}**']
+            for x in g[key]: L.append(f'{n}. {x}'); n += 1
+        L += ['', '### Modes, settings and options'] + [f'- **{x[0]}:**{" *(Full version badge)*" if x[2:] else ""} {x[1]}' for x in g['modes'] + g['settings']]
+        L += ['', '### Tips for teachers'] + [f'- {t}' for t in g['tips']]
+        L += ['', '### Ideas by subject'] + [f'- **{k}:** {v}' for k, v in g['subject_ideas'].items()]
+        if g.get('free_extra'): L += ['', f'**Free version, extra line:** {g["free_extra"]}']
+        if g.get('full_extra'): L += ['', f'**Full version, extra line:** {g["full_extra"]}']
+        L += ['', '### FAQ']
+        for q_, a in g['faq']: L += [f'**Q: {q_}**  ', f'A: {a}', '']
+        L += ['### Screenshots (alt text, then caption)'] + [f'- `{k}`: {a} *Caption:* {c}' for k, s_, a, c in g['shots']]
+        L += ['', '### Related games: ' + ', '.join(GP[r]['name'] for r in g['related']), '']
+    open(os.path.join(OUT, '..', 'game-pages-copy.md'), 'w', encoding='utf-8').write('\n'.join(L))
+write_copy_md()
 
 # ---------------- Help ----------------
 def q(qid, question, answer):
@@ -300,9 +468,9 @@ nf = '''<section class="nf"><div class="wrap"><p class="eyebrow">Error 404</p><h
 page('/404', 'Page not found', 'This page could not be found.', nf, '404.html', noindex=True)
 
 # ---------------- sitemap / robots ----------------
-urls = ['/', '/games/', '/help/', '/about/', '/privacy/', '/terms/']
+urls = ['/', '/games/'] + [f'/games/{g[0]}/' for g in GAMES] + ['/help/', '/about/', '/privacy/', '/terms/']
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-  ''.join(f'  <url><loc>{DOMAIN}{u}</loc><lastmod>2026-10-20</lastmod></url>\n' for u in urls) + '</urlset>\n')
+  ''.join(f'  <url><loc>{DOMAIN}{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n' for u in urls) + '</urlset>\n')
 open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\n\nSitemap: {DOMAIN}/sitemap.xml\n')
 open(os.path.join(OUT, 'favicon.svg'), 'w').write(MARK.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ').replace(' aria-hidden="true" focusable="false"', ''))
 print('built', OUT)

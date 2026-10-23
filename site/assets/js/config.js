@@ -19,6 +19,40 @@ window.RR_CONFIG = {
   // Support email address shown on Help, About, Privacy and Terms
   CONTACT_EMAIL: "support@reviewrecess.com",
 
+  // Optional: each game's own TpT page. Blank = the game page's "Get it on TpT" button uses TPT_STORE_URL above.
+  TPT_GAME_URLS: {
+    "answer-armada": "",
+    "brain-board-blitz": "",
+    "million-point-climb": "",
+    "forbidden-words": "",
+    "letter-lifeline": "",
+    "pass-the-bomb": "",
+    "five-second-battle": "",
+    "sentence-slot-machine": "",
+    "mystery-cat": "",
+    "word-magnets": "",
+    "sentence-snap": "",
+    "word-scramble": "",
+    "tic-tac-toe-quiz-game": ""
+  },
+
+  // Optional: each game's FREE version link (TpT freebie page). Blank = the "Try the free version" button is hidden.
+  FREE_VERSION_URLS: {
+    "answer-armada": "",
+    "brain-board-blitz": "",
+    "million-point-climb": "",
+    "forbidden-words": "",
+    "letter-lifeline": "",
+    "pass-the-bomb": "",
+    "five-second-battle": "",
+    "sentence-slot-machine": "",
+    "mystery-cat": "",
+    "word-magnets": "",
+    "sentence-snap": "",
+    "word-scramble": "",
+    "tic-tac-toe-quiz-game": ""
+  },
+
   // Your YouTube channel (preview and how-to videos)
   YOUTUBE_URL: ""               // PLACEHOLDER
 };
