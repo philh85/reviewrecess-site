@@ -11,7 +11,7 @@
    =================================================================== */
 window.RR_CONFIG = {
   // Your TpT store page, e.g. "https://www.teacherspayteachers.com/store/review-recess"
-  TPT_STORE_URL: "",            // PLACEHOLDER — fill in when the store is live
+  TPT_STORE_URL: "https://www.teacherspayteachers.com/store/review-recess",
 
   // Your installation-help chatbot page (help only, no selling)
   SUPPORT_CHATBOT_URL: "",      // PLACEHOLDER
