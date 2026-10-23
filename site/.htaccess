@@ -15,6 +15,12 @@ ErrorDocument 404 /404.html
   RewriteRule ^ https://reviewrecess.com%{REQUEST_URI} [L,R=301]
   # V2.4: Grammar Battleships was renamed Review Recess Answer Armada (old image links; same rules as _redirects)
   RewriteRule ^assets/img/games/grammar-battleships-(640|1200)\.webp$ /assets/img/games/answer-armada-$1.webp [L,R=301]
+  # 23 Oct 2026: game pages. Renamed games (same rules as _redirects)
+  RewriteRule ^games/what-does-it-modify/?$ /games/word-magnets/ [L,R=301]
+  RewriteRule ^games/quiz-tac-toe/?$ /games/tic-tac-toe-quiz-game/ [L,R=301]
+  RewriteRule ^games/grammar-battleships/?$ /games/answer-armada/ [L,R=301]
+  RewriteRule ^assets/img/games/what-does-it-modify-(640|1200)\.webp$ /assets/img/games/word-magnets-$1.webp [L,R=301]
+  RewriteRule ^assets/img/games/quiz-tac-toe-(640|1200)\.webp$ /assets/img/games/tic-tac-toe-quiz-game-$1.webp [L,R=301]
   # Hide files that are not part of the site
   RewriteRule (^|/)(_headers|_redirects)$ - [R=404,L]
 </IfModule>
@@ -27,7 +33,7 @@ ErrorDocument 404 /404.html
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
   Header always set Cross-Origin-Opener-Policy "same-origin"
-  <FilesMatch "\.(webp|png|svg|ico)$">
+  <FilesMatch "\.(webp|png|jpg|svg|ico)$">
     Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
   <FilesMatch "^config\.js$">

@@ -1,7 +1,3 @@
-## Hosting
-
-Hosted on Cloudflare Pages via Git: build command none, build output directory `site`. Pushing to main deploys.
-
 # Review Recess website (reviewrecess.com)
 
 A fast, static website: plain HTML + CSS and one tiny script. No WordPress, no database, no tracking, no cookies.
@@ -10,20 +6,25 @@ A fast, static website: plain HTML + CSS and one tiny script. No WordPress, no d
 reviewrecess-site/
   site/                  <- THIS is the website. Upload this folder's contents.
     index.html             Home
-    games/index.html       Games (all 11)
+    games/index.html       Games (all 13)
+    games/<slug>/index.html   One page per game: how to play, modes, tips, FAQ (13 pages)
     help/index.html        Help & Support (installation FAQ + chatbot button)
     about/  privacy/  terms/   About, Privacy, Terms & licence
     404.html               "Page not found"
     assets/js/config.js    <- THE ONE FILE TO EDIT FOR LINKS
     assets/css/site.css    styles (navy + gold)
     assets/img/            screenshots (webp), logo-mark.svg, logo-wordmark.svg, og-image.png
+    assets/img/og/         one 1200 x 630 sharing image per game page (jpg)
     _headers               security headers for Cloudflare Pages
     _redirects             301 redirects for Cloudflare Pages (old image links of renamed games)
     .htaccess              the same headers + 404 page for Apache/Cloudways
     sitemap.xml  robots.txt  favicon.*  site.webmanifest
   site.zip               the same files zipped, for Cloudflare's "upload a zip" option
   tools/build.py         rebuilds the pages if you change wording (optional, see the end)
-  tools/games.py         game names and descriptions used by build.py
+  tools/games.py         short game names and card wording (Home and Games pages)
+  tools/game_pages.py    ALL the wording of the 13 game pages (edit here, then rebuild)
+  tools/make_images.py   remakes the game screenshots (webp) and sharing images from the PNGs in /workspace
+  game-pages-copy.md     every game page's wording in one readable file (written by build.py)
 ```
 
 ---
@@ -49,6 +50,10 @@ Rules: links must start with `https://`. `CONTACT_EMAIL` is just the address. An
 | `SUPPORT_CHATBOT_URL` | "Open the installation assistant" buttons on Help & Support |
 | `CONTACT_EMAIL` | "Email support" button and the email address on Help, About, Privacy, Terms |
 | `YOUTUBE_URL` | Footer and About |
+| `TPT_GAME_URLS` | Optional, one per game. The "Get it on TpT" buttons on that game's page. Blank uses `TPT_STORE_URL`. |
+| `FREE_VERSION_URLS` | Optional, one per game (the TpT page of the free version). The "Try the free version" buttons on that game's page. **Blank hides the button.** |
+
+The per-game keys are the page slugs: `answer-armada`, `brain-board-blitz`, `million-point-climb`, `forbidden-words`, `letter-lifeline`, `pass-the-bomb`, `five-second-battle`, `sentence-slot-machine`, `mystery-cat`, `word-magnets`, `sentence-snap`, `word-scramble`, `tic-tac-toe-quiz-game`. Use TpT links only, never a game's `/exec` link.
 
 **Free email at your domain:** Cloudflare (Email > Email Routing) can forward `support@reviewrecess.com` to your Gmail for free once the domain is on Cloudflare (step 2).
 
@@ -126,10 +131,14 @@ Use this only if you'd rather keep the site on Cloudways. It works the same; Clo
 ## 5. Changing wording (optional)
 Small edits: open the page's `index.html` in Notepad and change the text. But edits made this way are lost if you ever rebuild with the tool. For bigger changes, edit `tools/build.py` (pages) or `tools/games.py` (game names and descriptions), then run `py tools\build.py`. It rewrites the HTML pages in `site\`, the sitemap and robots.txt; it never touches `config.js`, images, `_headers`, `_redirects` or `.htaccess`.
 
-**Renamed games:** Grammar Battleships is now **Review Recess Answer Armada** (slug `answer-armada`). Old links to `/games/#grammar-battleships` still land on it (hidden anchor, `OLD_ANCHORS` in `tools/build.py`), and the old image URLs redirect with a 301 (`_redirects` on Cloudflare Pages, the same rule in `.htaccess` on Cloudways).
+**Game pages (23 Oct 2026):** every game has its own page at `/games/<slug>/` with a how-to-play guide, modes and settings, teacher tips, subject ideas, what you need, free vs full version, an FAQ (with FAQPage schema), screenshots, related games and TpT buttons. Change the wording in `tools/game_pages.py` and run `py tools\build.py`. That also rewrites `game-pages-copy.md`. If you replace screenshots, run `py tools\make_images.py` (needs Pillow: `py -m pip install pillow`). To mark a mode or setting as full version only, add `FULL` as its third item in `tools/game_pages.py` (it shows a small gold **Full version** badge), and use `free_extra` / `full_extra` for the matching line in the Free and Full version cards. Million Point Climb's Presenter mode (TV Display, Controller, phone remote) and Brain Board Blitz's save and resume are marked this way.
+
+**Renamed games (23 Oct 2026):** What Does It Modify? is now **Review Recess Word Magnets** (`/games/word-magnets/`) and Quiz Tac Toe is listed as the **Tic-Tac-Toe Quiz Game** (`/games/tic-tac-toe-quiz-game/`). Old page and image URLs redirect with a 301 (`_redirects` and `.htaccess`), and old `/games/#what-does-it-modify` and `/games/#quiz-tac-toe` links land on the right card.
+
+**Renamed games (earlier):** Grammar Battleships is now **Review Recess Answer Armada** (slug `answer-armada`). Old links to `/games/#grammar-battleships` still land on it (hidden anchor, `OLD_ANCHORS` in `tools/build.py`), and the old image URLs redirect with a 301 (`_redirects` on Cloudflare Pages, the same rule in `.htaccess` on Cloudways).
 
 ## 6. Rules the content follows
 * No publisher names (textbook brands) anywhere. AP® is only used with the ® and with the College Board disclaimer in the footer and Terms.
-* Games are not compared with, or named after, TV game shows or board-game brands.
+* Games are not named after TV game shows or board-game brands, and no brand names of shows or games appear anywhere. The game pages use a few generic descriptions only ("game-show style", "like the TV quiz shows students know", "a picture-based alternative to hangman", "hot-potato", "tic-tac-toe"). Remove them in `tools/game_pages.py` if you'd rather not.
 * No game links (`/exec`) or deployment IDs appear on the site. Buyers get those only in their TpT download.
 * Privacy page is truthful to how the games work today (your own Google account, `drive.file` only, nothing sent to Review Recess). Update it before live mode launches.
