@@ -5,17 +5,21 @@ in assets/js/config.js so Phil can change them without rebuilding."""
 import os, html, json, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from games import GAMES
-from game_pages import GAME_PAGES, OLD_SLUGS, NEED, FREE_TEXT, FULL_TEXT, BUNDLE_TEXT
-LASTMOD = '2026-10-23'
+from game_pages import GAME_PAGES, OLD_SLUGS, NEED, FREE_TEXT, FULL_TEXT, BUNDLE_TEXT, PRODUCT_LINES
+LASTMOD = '2026-10-26'
 GP = {g['slug']: g for g in GAME_PAGES}
 assert [g[0] for g in GAMES if g[0] not in GP] == [] and len(GAMES) == len(GAME_PAGES) == 13
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'site')
 DOMAIN = 'https://reviewrecess.com'
 E = html.escape
 
-MARK = ('<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#13294b"/>'
- + ''.join(f'<rect x="{11+c*15}" y="{11+r*15}" width="12" height="12" rx="2.5" fill="{"#d4af37" if r+c==2 else "#2b4a7a"}"/>' for r in range(3) for c in range(3))
- + '</svg>')
+# Logo badge (Oct 2026 logo). Source + transparent master: /workspace/brand/ (tools/make_brand.py).
+def logo(px, cls='brand-logo', eager=True):
+    return (f'<img class="{cls}" src="/assets/img/brand/review-recess-logo-96.png" '
+            f'srcset="/assets/img/brand/review-recess-logo-96.png 96w, /assets/img/brand/review-recess-logo-192.png 192w, /assets/img/brand/review-recess-logo-288.png 288w" '
+            f'sizes="{px}px" width="{px}" height="{px}" alt=""{"" if eager else " loading=\"lazy\""} decoding="async">')
+MARK = logo(46)
+MARK_FOOT = logo(84, 'brand-logo brand-logo-foot', eager=False)
 
 NAV = [('/', 'Home'), ('/games/', 'Games'), ('/help/', 'Help & Support'), ('/about/', 'About')]
 
@@ -34,7 +38,7 @@ def header(path):
 FOOT_GAMES = ''.join(f'<li><a href="/games/{g[0]}/">{E(g[1])}</a></li>' for g in GAMES)
 FOOTER = f'''<footer class="site-footer"><div class="wrap">
 <div class="foot-grid">
-<div><a class="brand" href="/">{MARK}<span><span class="brand-name">Review Recess</span><span class="brand-sub">Classroom review games</span></span></a>
+<div><a class="brand" href="/">{MARK_FOOT}<span><span class="brand-name">Review Recess</span><span class="brand-sub">Classroom review games</span></span></a>
 <p class="small" style="margin-top:14px;max-width:30em">Whole-class review games for the classroom screen. They run in your own Google account, and your questions stay in your own Google Drive.</p></div>
 <div><h2>Games</h2><ul class="foot-games">{FOOT_GAMES}</ul></div>
 <div><h2>Explore</h2><ul><li><a href="/games/">All games</a></li><li><a href="/help/">Help &amp; Support</a></li><li><a href="/about/">About</a></li><li>{btn("TPT_STORE_URL","TpT store","btn-sm btn-ghost-foot")}</li></ul></div>
@@ -58,7 +62,8 @@ def page(path, title, desc, body, out, noindex=False, og_image='/assets/img/og-i
 <title>{E(full)}</title>
 <meta name="description" content="{E(desc)}">
 {'<meta name="robots" content="noindex">' if noindex else f'<link rel="canonical" href="{canon}">'}
-<meta name="theme-color" content="#13294b">
+<meta name="theme-color" content="#151c20">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -123,6 +128,19 @@ home = f'''<section class="hero"><div class="wrap hero-grid">
 <div class="btn-row">{btn("TPT_STORE_URL","Visit our TpT store")}<a class="btn btn-ghost" href="/games/">See the games</a></div>
 </div>
 <figure class="shot" style="margin:0">{img("brain-board-blitz", GAMES[0][7], eager=True, sizes="(max-width:900px) 100vw, 540px")}<figcaption>Brain Board Blitz: a 5 × 5 team quiz board with live scores.</figcaption></figure>
+</div></section>
+
+<!-- PLACEHOLDER COPY: Home "first product line" block (eyebrow, heading, text, tier lines, button labels). -->
+<section class="alt" id="answer-armada-line"><div class="wrap line-feature">
+<div><p class="eyebrow">Our first product line</p><h2>Review Recess Answer Armada</h2>
+<p class="muted">The whole class answers questions to earn shots at the teacher's hidden ships. Try it free on your own screen, then choose the version that fits your class.</p>
+<ul class="mini-tiers">
+<li><strong>Free test version</strong><span class="muted small">A built-in sample set to try on your classroom screen.</span></li>
+<li><strong>3rd Grade Multiplication &amp; Division Facts</strong><span class="muted small">A ready-to-play topic pack with printables and an answer key.</span></li>
+<li><strong>Editable full version</strong><span class="muted small">Your own questions in your own Google Drive, plus a growing question bank.</span></li>
+</ul>
+<div class="btn-row"><a class="btn btn-gold" href="/games/answer-armada/#choose">Compare the versions</a><a class="btn btn-ghost" href="/games/answer-armada/">How to play</a></div></div>
+<figure class="shot shot-light" style="margin:0">{img("answer-armada", "Review Recess Answer Armada: a large question beside a lettered and numbered grid with hit and miss markers.", sizes="(max-width:900px) 100vw, 520px")}<figcaption>Review Recess Answer Armada in the Classic Fleet style.</figcaption></figure>
 </div></section>
 
 <section><div class="wrap">
@@ -209,6 +227,40 @@ def shot_img(key, alt, eager=False, sizes='(max-width:620px) 100vw, (max-width:9
 def ol(items, start):
     return f'<ol class="steps" start="{start}">' + ''.join(f'<li data-n="{start + i}">{E(x)}</li>' for i, x in enumerate(items)) + '</ol>'
 
+YES = '<span class="yes" aria-hidden="true">✓</span><span class="sr">Yes</span>'
+NO = '<span class="no" aria-hidden="true">–</span><span class="sr">No</span>'
+def cell(v):
+    return YES if v == 'yes' else NO if v == 'no' else E(v)
+
+def product_line(slug):
+    """'Choose your version' tiers + comparison table (wording: PRODUCT_LINES in game_pages.py, links: config.js)."""
+    L = PRODUCT_LINES[slug]
+    def tier(t):
+        key, fb, label = t['button']
+        fb_attr = f' data-fallback="{fb}"' if fb else ''
+        b = (f'<a class="btn {"btn-gold" if t["id"] != "free" else "btn-navy"}" data-link="{key}"{fb_attr} aria-disabled="true">'
+             f'{E(label)}<span class="soon">Coming soon</span></a>')
+        if t.get('extra_button'):
+            k2, l2 = t['extra_button']
+            b += f'<a class="btn btn-ghost" data-link="{k2}" data-optional hidden aria-disabled="true">{E(l2)}<span class="soon">Coming soon</span></a>'
+        inc = ''.join(f'<li>{E(x)}</li>' for x in t['included'])
+        return (f'<article class="card tier tier-{t["id"]}" id="tier-{t["id"]}"><p class="tier-label">{E(t["label"])}</p>'
+                f'<h3>{E(t["name"])}</h3><p class="muted">{E(t["blurb"])}</p>'
+                f'<h4>What\'s included</h4><ul class="ticks">{inc}</ul>'
+                f'<p class="small muted tier-note">{E(t["note"])}</p><div class="btn-row tier-btns">{b}</div></article>')
+    names = [t['name'] for t in L['tiers']]
+    head = ''.join(f'<th scope="col">{E(n)}</th>' for n in names)
+    rows = ''.join(f'<tr><th scope="row">{E(r[0])}</th>' + ''.join(f'<td>{cell(v)}</td>' for v in r[1:]) + '</tr>' for r in L['compare'])
+    return f'''<!-- PLACEHOLDER COPY: everything in this "Choose your version" section (headings, tier text, included lists, table, note). Wording lives in tools/game_pages.py PRODUCT_LINES. -->
+<section class="product-line" id="choose"><span id="versions" aria-hidden="true"></span><div class="wrap">
+<p class="eyebrow">{E(L["eyebrow"])}</p><h2>{E(L["heading"])}</h2><p class="lead">{E(L["lead"])}</p>
+<div class="grid g3 tiers" style="margin-top:26px">{"".join(tier(t) for t in L["tiers"])}</div>
+<h3 class="compare-h" id="compare">Compare the versions</h3>
+<div class="table-wrap" role="region" aria-labelledby="compare" tabindex="0"><table class="compare">
+<thead><tr><td></td>{head}</tr></thead><tbody>{rows}</tbody></table></div>
+<p class="small muted" style="margin:16px 0 0">{E(L["footnote"])}</p>
+</div></section>'''
+
 def game_page(g):
     slug, name, short = g['slug'], g['name'], g['short']
     path = f'/games/{slug}/'
@@ -237,19 +289,29 @@ def game_page(g):
     rel = ''.join(game_card(next(x for x in GAMES if x[0] == r), h='h3') for r in g['related'])
     toc = [('how-to-play', 'How to play'), ('modes', 'Modes & settings'), ('tips', 'Teacher tips'),
            ('what-you-need', 'What you need'), ('versions', 'Free & full version'), ('faq', 'FAQ'), ('related', 'Related games')]
+    line = slug in PRODUCT_LINES
+    if line:
+        toc = [('choose', 'Choose your version')] + [x for x in toc if x[0] != 'versions']
     toc_html = ''.join(f'<li><a href="#{i}">{t}</a></li>' for i, t in toc)
+    hero_btns = (f'<a class="btn btn-gold" href="#choose">Compare versions</a>{free}<a class="btn btn-ghost" href="#how-to-play">How to play</a>'
+                 if line else f'{tpt}{free}<a class="btn btn-ghost" href="#how-to-play">How to play</a>')
+    versions = '' if line else f'''<div class="grid g2" id="versions" style="margin-top:40px">
+<div class="card"><h3>Free version</h3><p class="muted">{E(FREE_TEXT)}{free_extra}</p><div class="btn-row">{free.replace('btn-ghost', 'btn-navy')}<span class="small muted" data-free-note>The free version for this game is coming soon.</span></div></div>
+<div class="card version-full"><h3>Full version</h3><p class="muted">{E(FULL_TEXT)}{full_extra}</p><p class="muted">{E(BUNDLE_TEXT)}</p><div class="btn-row">{tpt}</div></div>
+</div>'''
     body = f'''{crumbs([('/', 'Home'), ('/games/', 'Games'), (None, name)])}
 <div class="page-head game-head"><div class="wrap game-hero">
 <div>
 <p class="eyebrow">{E(g["tag"])}</p>
 <h1>{E(g["h1"])}</h1>
 {intro}
-<div class="btn-row" style="margin-top:22px">{tpt}{free}<a class="btn btn-ghost" href="#how-to-play">How to play</a></div>
+<div class="btn-row" style="margin-top:22px">{hero_btns}</div>
 </div>
 <div><figure class="shot shot-light" style="margin:0">{shot_img(main_key, main_alt, eager=True, sizes="(max-width:900px) 100vw, 520px")}<figcaption>{E(main_cap)}</figcaption></figure>
 {glance}</div>
 </div>
 <div class="wrap"><ul class="toc" aria-label="On this page">{toc_html}</ul></div></div>
+{product_line(slug) if line else ''}
 
 <section id="how-to-play"><div class="wrap grid g2 how">
 <div class="prose"><p class="eyebrow">Step by step</p><h2>How to play {E(short)}</h2>{how}</div>
@@ -270,10 +332,7 @@ def game_page(g):
 <section class="alt" id="what-you-need"><div class="wrap">
 <p class="eyebrow">Before you start</p><h2>What you need</h2>
 <div class="grid g3" style="margin-top:22px">{need}</div>
-<div class="grid g2" id="versions" style="margin-top:40px">
-<div class="card"><h3>Free version</h3><p class="muted">{E(FREE_TEXT)}{free_extra}</p><div class="btn-row">{free.replace('btn-ghost', 'btn-navy')}<span class="small muted" data-free-note>The free version for this game is coming soon.</span></div></div>
-<div class="card version-full"><h3>Full version</h3><p class="muted">{E(FULL_TEXT)}{full_extra}</p><p class="muted">{E(BUNDLE_TEXT)}</p><div class="btn-row">{tpt}</div></div>
-</div>
+{versions}
 </div></section>
 
 <section id="faq"><div class="wrap prose faq">
@@ -340,6 +399,12 @@ def write_copy_md():
         L += ['', '### Modes, settings and options'] + [f'- **{x[0]}:**{" *(Full version badge)*" if x[2:] else ""} {x[1]}' for x in g['modes'] + g['settings']]
         L += ['', '### Tips for teachers'] + [f'- {t}' for t in g['tips']]
         L += ['', '### Ideas by subject'] + [f'- **{k}:** {v}' for k, v in g['subject_ideas'].items()]
+        if g['slug'] in PRODUCT_LINES:
+            PL = PRODUCT_LINES[g['slug']]
+            L += ['', '### Choose your version (PLACEHOLDER COPY)', f'**{PL["heading"]}**', PL['lead'], '']
+            for t in PL['tiers']:
+                L += [f'**{t["label"]}: {t["name"]}.** {t["blurb"]}'] + [f'- {x}' for x in t['included']] + [f'*{t["note"]}* Button: "{t["button"][2]}" ({t["button"][0]})', '']
+            L += ['| | ' + ' | '.join(t['name'] for t in PL['tiers']) + ' |', '|---|---|---|---|'] + ['| ' + ' | '.join(r) + ' |' for r in PL['compare']] + ['', PL['footnote']]
         if g.get('free_extra'): L += ['', f'**Free version, extra line:** {g["free_extra"]}']
         if g.get('full_extra'): L += ['', f'**Full version, extra line:** {g["full_extra"]}']
         L += ['', '### FAQ']
@@ -533,5 +598,5 @@ urls = ['/', '/games/'] + [f'/games/{g[0]}/' for g in GAMES] + ['/help/', '/abou
 open(os.path.join(OUT, 'sitemap.xml'), 'w').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
   ''.join(f'  <url><loc>{DOMAIN}{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n' for u in urls) + '</urlset>\n')
 open(os.path.join(OUT, 'robots.txt'), 'w').write(f'User-agent: *\nAllow: /\n\nSitemap: {DOMAIN}/sitemap.xml\n')
-open(os.path.join(OUT, 'favicon.svg'), 'w').write(MARK.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ').replace(' aria-hidden="true" focusable="false"', ''))
+# favicon.svg / favicon.ico / icons are static files in site/ (made from the logo by /workspace/brand/tools/make_brand.py)
 print('built', OUT)
