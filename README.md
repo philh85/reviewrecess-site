@@ -12,8 +12,8 @@ reviewrecess-site/
     about/  privacy/  terms/   About, Privacy, Terms & licence
     404.html               "Page not found"
     assets/js/config.js    <- THE ONE FILE TO EDIT FOR LINKS
-    assets/css/site.css    styles (navy + gold)
-    assets/img/            screenshots (webp), logo-mark.svg, logo-wordmark.svg, og-image.png
+    assets/css/site.css    styles (charcoal + logo yellow, cyan accent; Oct 2026 logo)
+    assets/img/            screenshots (webp), brand/review-recess-logo-*.png (logo badge), og-image.png
     assets/img/og/         one 1200 x 630 sharing image per game page (jpg)
     _headers               security headers for Cloudflare Pages
     _redirects             301 redirects for Cloudflare Pages (old image links of renamed games)
@@ -52,6 +52,9 @@ Rules: links must start with `https://`. `CONTACT_EMAIL` is just the address. An
 | `YOUTUBE_URL` | Footer and About |
 | `TPT_GAME_URLS` | Optional, one per game. The "Get it on TpT" buttons on that game's page. Blank uses `TPT_STORE_URL`. |
 | `FREE_VERSION_URLS` | Optional, one per game (the TpT page of the free version). The "Try the free version" buttons on that game's page. **Blank hides the button.** |
+| `ANSWER_ARMADA.PACK_TPT_URL` | TpT page of the Answer Armada 3rd Grade Multiplication & Division Facts pack. "Get the topic pack on TpT" button in the Choose your version section. Blank = Coming soon. |
+| `ANSWER_ARMADA.EDITABLE_TPT_URL` | TpT page of the Answer Armada editable full version. Blank = Coming soon. |
+| `ANSWER_ARMADA.FREE_PLAY_URL` | Optional direct "Play the free version now" button. Left blank on purpose (the site sends every version through TpT). Hidden while blank. |
 
 The per-game keys are the page slugs: `answer-armada`, `brain-board-blitz`, `million-point-climb`, `forbidden-words`, `letter-lifeline`, `pass-the-bomb`, `five-second-battle`, `sentence-slot-machine`, `mystery-cat`, `word-magnets`, `sentence-snap`, `word-scramble`, `tic-tac-toe-quiz-game`. Use TpT links only, never a game's `/exec` link.
 

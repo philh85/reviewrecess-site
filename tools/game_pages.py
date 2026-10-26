@@ -935,3 +935,58 @@ OLD_SLUGS = {
     "tic-tac-toe-quiz-game": ["quiz-tac-toe"],
     "answer-armada": ["grammar-battleships"],
 }
+
+# =============================================================================================
+# PRODUCT LINES: the "Choose your version" tiers on a game page (first line: Answer Armada, Oct 2026).
+# ALL WORDING BELOW IS PLACEHOLDER COPY. Phil rewrites it before launch (TpT/brand rule: no AI-written listing copy).
+# Buttons come from assets/js/config.js (key = link, fallback = used when key is blank). Blank = grey "Coming soon".
+# "included" lists must match what is really in each TpT download.
+PRODUCT_LINES = {
+ "answer-armada": dict(
+  eyebrow="Choose your version",
+  heading="Three ways to play Review Recess Answer Armada",
+  lead="Start with the free test version on your own classroom screen, then pick the version that fits how you teach.",
+  tiers=[
+   dict(id="free", label="Free", name="Free test version",
+        blurb="Check that Answer Armada runs on your classroom screen and school network before you buy.",
+        included=["The complete game with one built-in sample set of 3rd grade multiplication facts",
+                  "Opens straight from a link, with no Google sign-in",
+                  "Every picture style and difficulty level",
+                  "A one-page quick start guide"],
+        note="The sample set can't be edited.",
+        button=("FREE_VERSION_URLS.answer-armada", "", "Get the free version on TpT"),
+        extra_button=("ANSWER_ARMADA.FREE_PLAY_URL", "Play the free version now")),
+   dict(id="pack", label="Topic pack", name="3rd Grade Multiplication & Division Facts",
+        blurb="A ready-to-play pack: open the link, pick a fact set and play. No typing questions in.",
+        included=["Ready-to-play game link with 150+ multiplication and division facts in 8 sets you can mix and match",
+                  "Printable question list with a teacher answer key",
+                  "Teacher kit: quick start, full instructions, troubleshooting and a setup video",
+                  "Student practice page and exit ticket that match the facts",
+                  "Printable team cards and scoreboard"],
+        note="The questions are fixed. To use your own, choose the editable version.",
+        button=("ANSWER_ARMADA.PACK_TPT_URL", "", "Get the topic pack on TpT")),
+   dict(id="editable", label="Most flexible", name="Editable full version",
+        blurb="Use Answer Armada all year with your own questions, saved in your own Google Drive.",
+        included=["Add, paste and edit as many question banks as you like, saved in a Google Sheet in your own Drive",
+                  "Access to the Review Recess question bank, ready to paste in, with new questions added over time",
+                  "Saved class rosters and a fair student picker",
+                  "Every picture style and difficulty level",
+                  "The full teacher kit and setup video"],
+        note="Runs in your own Google account. A personal Gmail account works if your school blocks the game.",
+        button=("ANSWER_ARMADA.EDITABLE_TPT_URL", "", "Get the editable version on TpT")),
+  ],
+  # comparison table: (row label, free, pack, editable). "yes" / "no" render as icons with screen-reader text.
+  compare=[
+   ("Plays on your smart TV or projector", "yes", "yes", "yes"),
+   ("Questions", "One built-in sample set", "3rd grade multiplication & division facts (8 sets)", "Your own questions plus the question bank"),
+   ("Pick which questions to use", "yes", "yes", "yes"),
+   ("Add or edit your own questions", "no", "no", "yes"),
+   ("Printable question list and answer key", "no", "yes", "yes"),
+   ("Teacher kit and setup video", "Quick start only", "yes", "yes"),
+   ("Growing question bank", "no", "no", "yes"),
+   ("Saved class rosters and student picker", "no", "no", "yes"),
+   ("Google sign-in", "Not needed", "Not needed", "Your own account"),
+  ],
+  footnote="Every version is sold or given away through our Teachers Pay Teachers store.",
+ ),
+}
