@@ -59,9 +59,10 @@ window.RR_CONFIG = {
   ANSWER_ARMADA: {
     PACK_TPT_URL: "",       // TpT page: Answer Armada, 3rd Grade Multiplication & Division Facts (non-editable topic pack)
     EDITABLE_TPT_URL: "",   // TpT page: Answer Armada editable full version + growing question bank
-    // Optional extra "Play the free version now" button that opens the free game directly (not through TpT).
-    // Left blank on purpose: the site sends teachers to TpT for every version. The button stays hidden while blank.
-    FREE_PLAY_URL: ""
+    // Permanent play.reviewrecess.com link for the FREE edition only. Paid editions stay off this site.
+    // site.js shows the button only when this is https://play.reviewrecess.com/answer-armada/<12-char token>.
+    // Upload the site after that URL returns HTTP 302. See play/README.md.
+    FREE_PLAY_URL: "https://play.reviewrecess.com/answer-armada/j3Z3jrST4DqU"
   },
 
   // Your YouTube channel (preview and how-to videos)

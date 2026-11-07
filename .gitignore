@@ -1,3 +1,6 @@
 *.zip
 __pycache__/
 .DS_Store
+play/private/*
+!play/private/README.md
+play/.wrangler/

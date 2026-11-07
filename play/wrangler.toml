@@ -1,0 +1,25 @@
+# Worker for play.reviewrecess.com. This is not the marketing site.
+# The Pages project that serves reviewrecess.com / www.reviewrecess.com stays as it is.
+# Do not add play.reviewrecess.com as a custom domain on that Pages project.
+#
+# workers.dev and preview URLs stay off so the route map is not published on a second host.
+name = "reviewrecess-play"
+main = "src/worker.js"
+compatibility_date = "2026-11-07"
+workers_dev = false
+preview_urls = false
+
+# Create the namespace, then uncomment and paste the id. Do not guess an id.
+#   npx wrangler kv namespace create PLAY_MAP
+# The worker reads only the key "active". Keep the full registry under a
+# separate key named "registry" if you want a server-side backup. The worker
+# does not read that key.
+#
+# [[kv_namespaces]]
+# binding = "PLAY_MAP"
+# id = "PASTE_NAMESPACE_ID"
+
+# Do not add [vars] PLAY_MAP_JSON here. A committed wrangler var would publish the map.
+# KV is the production binding. A Worker secret is capped at 5 KB. The compact
+# active map currently fits, but the full registry (history included) does not,
+# and more editions will push the active map over the limit too.
