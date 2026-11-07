@@ -14,6 +14,11 @@
     var v = String(raw(key) || '').trim();
     if (!v) return '';
     if (key === 'CONTACT_EMAIL') return EMAIL.test(v) ? v : '';
+    // Free Answer Armada only. Paid play links never go in this file, and a
+    // script.google.com /exec URL is not accepted here.
+    if (key === 'ANSWER_ARMADA.FREE_PLAY_URL') {
+      return /^https:\/\/play\.reviewrecess\.com\/answer-armada\/[ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789]{12}$/.test(v) ? v : '';
+    }
     return /^https:\/\/[^\s"'<>]+$/i.test(v) ? v : '';
   }
   function ready(fn) { if (d.readyState !== 'loading') fn(); else d.addEventListener('DOMContentLoaded', fn); }

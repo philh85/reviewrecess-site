@@ -54,9 +54,9 @@ Rules: links must start with `https://`. `CONTACT_EMAIL` is just the address. An
 | `FREE_VERSION_URLS` | Optional, one per game (the TpT page of the free version). The "Try the free version" buttons on that game's page. **Blank hides the button.** |
 | `ANSWER_ARMADA.PACK_TPT_URL` | TpT page of the Answer Armada 3rd Grade Multiplication & Division Facts pack. "Get the topic pack on TpT" button in the Choose your version section. Blank = Coming soon. |
 | `ANSWER_ARMADA.EDITABLE_TPT_URL` | TpT page of the Answer Armada editable full version. Blank = Coming soon. |
-| `ANSWER_ARMADA.FREE_PLAY_URL` | Optional direct "Play the free version now" button. Left blank on purpose (the site sends every version through TpT). Hidden while blank. |
+| `ANSWER_ARMADA.FREE_PLAY_URL` | Permanent free Answer Armada link on `play.reviewrecess.com` (see section 7). The button stays hidden unless the value is exactly that kind of URL. Paid play links do not go here. |
 
-The per-game keys are the page slugs: `answer-armada`, `brain-board-blitz`, `million-point-climb`, `forbidden-words`, `letter-lifeline`, `pass-the-bomb`, `five-second-battle`, `sentence-slot-machine`, `mystery-cat`, `word-magnets`, `sentence-snap`, `word-scramble`, `tic-tac-toe-quiz-game`. Use TpT links only, never a game's `/exec` link.
+The per-game keys are the page slugs: `answer-armada`, `brain-board-blitz`, `million-point-climb`, `forbidden-words`, `letter-lifeline`, `pass-the-bomb`, `five-second-battle`, `sentence-slot-machine`, `mystery-cat`, `word-magnets`, `sentence-snap`, `word-scramble`, `tic-tac-toe-quiz-game`. Use TpT links only, never a game's `/exec` link. The one exception is `ANSWER_ARMADA.FREE_PLAY_URL`, which is a `https://play.reviewrecess.com/answer-armada/<token>` address and still not an `/exec` link.
 
 **Free email at your domain:** Cloudflare (Email > Email Routing) can forward `support@reviewrecess.com` to your Gmail for free once the domain is on Cloudflare (step 2).
 
@@ -143,5 +143,17 @@ Small edits: open the page's `index.html` in Notepad and change the text. But ed
 ## 6. Rules the content follows
 * No publisher names (textbook brands) anywhere. AP® is only used with the ® and with the College Board disclaimer in the footer and Terms.
 * Games are not named after TV game shows or board-game brands, and no brand names of shows or games appear anywhere. The game pages use a few generic descriptions only ("game-show style", "like the TV quiz shows students know", "a picture-based alternative to hangman", "hot-potato", "tic-tac-toe"). Remove them in `tools/game_pages.py` if you'd rather not.
-* No game links (`/exec`) or deployment IDs appear on the site. Buyers get those only in their TpT download.
+* No game links (`/exec`) or deployment IDs appear on the site. Buyers get a permanent `play.reviewrecess.com` link in their TpT download (section 7). The site itself publishes only the free Answer Armada play link.
 * Privacy page is truthful to how the games work today (your own Google account, `drive.file` only, nothing sent to Review Recess). Update it before live mode launches.
+
+## 7. Permanent play links (play.reviewrecess.com)
+
+Teachers should keep one link per product edition. When that edition is updated, the link stays the same and only the Google destination behind it changes.
+
+The link shape is `https://play.reviewrecess.com/<game-slug>/<12-character-token>`. Answer Armada free, the 3rd grade multiplication and division pack, and the editable version are three different links. Picture themes are not separate links. Word Morph and What's the Time each have one link. The adverb game (What Does It Modify? / Word Magnets) is not published on this host until the product names are confirmed.
+
+The host is a Cloudflare Worker on the **same Cloudflare account that already serves the website**. It is not a new site and it is not a domain on the Pages project. `play.reviewrecess.com` has no DNS record yet; adding the Worker's custom domain creates it. Step-by-step commands, rollback, and what not to commit are in `play/README.md`.
+
+The token list is private. This repository is public, so the registry is not in git. Do not paste paid play links into `config.js`, the sitemap, or a pull request.
+
+Upload the website change (the free Answer Armada "Play the free version now" button) only after `curl -sI` on that free URL shows `HTTP/2 302` and `cache-control: no-store`. Until the custom domain exists, that check cannot pass. TpT kit PDFs are updated after the same check, by swapping each product's `/exec` link for its play link. This repo does not contain those kits. Do not delete the old Apps Script deployments.
